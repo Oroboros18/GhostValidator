@@ -1,11 +1,8 @@
 from flask import Flask, request, jsonify
 import os
 from openai import OpenAI
-from dotenv import load_dotenv
 import json
 import re
-
-load_dotenv()
 
 app = Flask(__name__)
 
@@ -32,7 +29,10 @@ CONTENT_TYPES = [
 ]
 
 def get_client():
-    return OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY not found")
+    return OpenAI(api_key=api_key)
 
 def validate_content(text, language, content_type, target_audience, brand_rules=None):
     lang_name = LANGUAGE_NAMES.get(language, "English")
