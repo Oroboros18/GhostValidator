@@ -8,7 +8,6 @@ import re
 load_dotenv()
 
 app = Flask(__name__)
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 SUPPORTED_LANGUAGES = ["en", "fr", "es", "pt", "ar", "hi", "zh"]
 
@@ -31,6 +30,9 @@ CONTENT_TYPES = [
     "email",
     "general"
 ]
+
+def get_client():
+    return OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def validate_content(text, language, content_type, target_audience, brand_rules=None):
     lang_name = LANGUAGE_NAMES.get(language, "English")
@@ -72,7 +74,7 @@ Return ONLY a valid JSON object with this exact structure:
 
 Verdict: VALID=0-30, WARNING=31-60, DANGER=61-100. Return ONLY JSON."""
 
-    response = client.chat.completions.create(
+    response = get_client().chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=1000,
